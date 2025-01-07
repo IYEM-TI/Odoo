@@ -1,23 +1,47 @@
-<!-- my_model_views.xml -->
+<!-- views/loan_views.xml -->
 <odoo>
-    <record id="view_form_my_model" model="ir.ui.view">
-        <field name="name">my.model.form</field>
-        <field name="model">my.model</field>
+    <record id="view_form_loan" model="ir.ui.view">
+        <field name="name">loan.management.form</field>
+        <field name="model">loan.management</field>
         <field name="arch" type="xml">
-            <form string="Mi Modelo">
-                <group>
-                    <field name="name"/>
-                    <field name="description"/>
-                </group>
+            <form string="Préstamo">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="amount"/>
+                        <field name="interest_rate"/>
+                        <field name="duration"/>
+                        <field name="start_date"/>
+                        <field name="total_amount_due"/>
+                        <field name="monthly_payment"/>
+                        <field name="state"/>
+                    </group>
+                    <footer>
+                        <button name="approve_loan" type="object" string="Aprobar" states="draft" class="oe_highlight"/>
+                        <button name="mark_as_paid" type="object" string="Marcar como Pagado" states="approved" class="oe_highlight"/>
+                    </footer>
+                </sheet>
             </form>
         </field>
     </record>
 
-    <record id="action_my_model" model="ir.actions.act_window">
-        <field name="name">Mi Modelo</field>
-        <field name="res_model">my.model</field>
-        <field name="view_mode">form,tree</field>
+    <record id="view_tree_loan" model="ir.ui.view">
+        <field name="name">loan.management.tree</field>
+        <field name="model">loan.management</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="amount"/>
+                <field name="interest_rate"/>
+                <field name="duration"/>
+                <field name="start_date"/>
+                <field name="total_amount_due"/>
+                <field name="monthly_payment"/>
+                <field name="state"/>
+            </tree>
+        </field>
     </record>
 
-    <menuitem id="menu_my_model" name="Mi Modelo" parent="base.menu_custom" action="action_my_model"/>
+    <menuitem id="loan_management_menu" name="Préstamos" sequence="10"/>
+    <menuitem id="loan_management_submenu" name="Gestión de Préstamos" parent="loan_management_menu" action="loan_management_action"/>
 </odoo>
