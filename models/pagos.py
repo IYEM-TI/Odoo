@@ -22,31 +22,36 @@ class Pago(models.Model):
             solicitud = pago.solicitud_id
             monto_pago_restante = pago.monto_pago
 
-            # Cálculo de lo que corresponde a Capital y el interés ordinario
+            # Calcular monto de capital e intereses ordinarios
             if not pago.interes_condonado:
                 pago.interes_ordinario_pagado = monto_pago_restante * (solicitud.tasa_interes / 100)
                 monto_pago_restante -= pago.interes_ordinario_pagado
 
-            # Cálculo del interés moratorio si aplica
+            # Calcular el interés moratorio si es necesario
             if not pago.interes_moratorio_condonado:
                 pago.interes_moratorio_pagado = monto_pago_restante * (solicitud.tasa_interes_moratorio / 100)
                 monto_pago_restante -= pago.interes_moratorio_pagado
 
-            # El resto se destina a Capital
+            # El resto se destina al capital
             pago.capital_pagado = monto_pago_restante
 
             # Actualizamos la tabla de amortización
             self._actualizar_tabla_amortizacion(pago, monto_pago_restante)
 
     def _actualizar_tabla_amortizacion(self, pago, monto_pago_restante):
-        # Aquí actualizamos la tabla de amortización con el pago realizado
+        """
+        Aquí actualizamos la tabla de amortización con el pago realizado.
+        Si el monto de pago cubre una cuota completa, actualizamos el estatus.
+        """
         for fila in pago.solicitud_id.tabla_amortizacion:
-            if fila.monto_pago > 0:
+            if fila.estatus == 'pendiente' and monto_pago_restante > 0:
                 if fila.monto_pago <= monto_pago_restante:
                     fila.monto_pago = 0  # Se paga todo
+                    fila.estatus = 'pagado'  # Marcar como pagado
                     monto_pago_restante -= fila.monto_pago
                 else:
                     fila.monto_pago -= monto_pago_restante  # Solo se paga parcialmente
                     monto_pago_restante = 0
             if monto_pago_restante == 0:
                 break
+
