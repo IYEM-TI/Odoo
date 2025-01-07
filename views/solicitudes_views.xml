@@ -1,0 +1,29 @@
+<!-- views/solicitudes_views.xml -->
+<odoo>
+    <record id="view_solicitud_form" model="ir.ui.view">
+        <field name="name">prestamos.solicitud.form</field>
+        <field name="model">prestamos.solicitud</field>
+        <field name="arch" type="xml">
+            <form string="Detalles de Crédito">
+                <sheet>
+                    <group>
+                        <field name="clave_contrato"/>
+                        <field name="folio_contrato"/>
+                        <field name="cliente_id"/>
+                        <field name="monto_otorgado"/>
+                        <field name="tipo_credito"/>
+                        <field name="plazo"/>
+                        <field name="tasa_interes" placeholder="Ingrese la tasa de interés ordinario"/>
+                        <field name="fecha_entrega"/>
+                        <field name="estatus"/>
+                    </group>
+                    <notebook>
+                        <page string="Tabla de Amortización">
+                            <field name="tabla_amortizacion" widget="one2many_list"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
