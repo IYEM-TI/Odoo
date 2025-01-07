@@ -1,0 +1,27 @@
+<!-- views/pagos_views.xml -->
+<odoo>
+    <record id="view_pago_form" model="ir.ui.view">
+        <field name="name">prestamos.pago.form</field>
+        <field name="model">prestamos.pago</field>
+        <field name="arch" type="xml">
+            <form string="Registrar Pago">
+                <sheet>
+                    <group>
+                        <field name="solicitud_id"/>
+                        <field name="fecha_pago"/>
+                        <field name="monto_pago"/>
+                        <field name="tipo_pago"/>
+                        <field name="interes_condonado"/>
+                        <field name="interes_moratorio_condonado"/>
+                        <field name="capital_pagado" readonly="1"/>
+                        <field name="interes_ordinario_pagado" readonly="1"/>
+                        <field name="interes_moratorio_pagado" readonly="1"/>
+                    </group>
+                    <footer>
+                        <button string="Pagar" type="object" name="action_pagar" class="btn-primary"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
