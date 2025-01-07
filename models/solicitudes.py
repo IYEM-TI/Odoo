@@ -16,26 +16,17 @@ class SolicitudPrestamo(models.Model):
         ('sustentable', 'Sustentable')
     ], string="Tipo de Crédito", required=True)
     plazo = fields.Selection([('12', '12 meses'), ('18', '18 meses'), ('24', '24 meses')], string="Plazo de Devolución", required=True)
-    tasa_interes = fields.Float(string="Tasa de Interés Anual", compute='_compute_tasa_interes', store=True)
-    tasa_interes_moratorio = fields.Float(string="Tasa de Interés Moratorio", compute='_compute_tasa_interes_moratorio', store=True)
+    tasa_interes = fields.Float(string="Tasa de Interés Ordinario (%)", required=True)  # Este campo se podrá llenar manualmente
+    tasa_interes_moratorio = fields.Float(string="Tasa de Interés Moratorio (%)", compute='_compute_tasa_interes_moratorio', store=True)
     fecha_entrega = fields.Date(string="Fecha de Entrega", default=fields.Date.today)
     estatus = fields.Selection([('pendiente', 'Pendiente'), ('aprobado', 'Aprobado'), ('en_pago', 'En Pago'), ('pagado', 'Pagado')], string="Estatus", default='pendiente')
     tabla_amortizacion = fields.One2many('prestamos.amortizacion', 'solicitud_id', string="Tabla de Amortización")
 
-    @api.depends('tipo_credito')
-    def _compute_tasa_interes(self):
-        for record in self:
-            if record.tipo_credito == 'artesanal':
-                record.tasa_interes = 7  # Por ejemplo, 7% para mujeres, puedes incluir lógica aquí según sexo
-            elif record.tipo_credito == 'emprendedores':
-                record.tasa_interes = 7  # Igual que artesanal
-            elif record.tipo_credito == 'sustentable':
-                record.tasa_interes = 5  # 5% para sustentable
-
     @api.depends('tasa_interes')
     def _compute_tasa_interes_moratorio(self):
         for record in self:
-            record.tasa_interes_moratorio = record.tasa_interes * 2.5  # Moratorio es 2.5 veces la tasa ordinaria
+            # Moratorio es 2.5 veces la tasa de interés ordinario
+            record.tasa_interes_moratorio = record.tasa_interes * 2.5
 
     @api.model
     def create(self, vals):
@@ -46,9 +37,9 @@ class SolicitudPrestamo(models.Model):
     def _generar_tabla_amortizacion(self):
         # Lógica para generar la tabla de amortización
         for record in self:
-            # El monto fijo sería el monto dividido entre el número de pagos según el plazo
-            monto_fijo = record.monto_otorgado / int(record.plazo) 
+            monto_fijo = record.monto_otorgado / int(record.plazo)  # Pagos mensuales
             for mes in range(1, int(record.plazo) + 1):
+                # Se crea una fila de la tabla de amortización
                 self.env['prestamos.amortizacion'].create({
                     'solicitud_id': record.id,
                     'mes': mes,
