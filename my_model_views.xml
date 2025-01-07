@@ -1,0 +1,23 @@
+<!-- my_model_views.xml -->
+<odoo>
+    <record id="view_form_my_model" model="ir.ui.view">
+        <field name="name">my.model.form</field>
+        <field name="model">my.model</field>
+        <field name="arch" type="xml">
+            <form string="Mi Modelo">
+                <group>
+                    <field name="name"/>
+                    <field name="description"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_my_model" model="ir.actions.act_window">
+        <field name="name">Mi Modelo</field>
+        <field name="res_model">my.model</field>
+        <field name="view_mode">form,tree</field>
+    </record>
+
+    <menuitem id="menu_my_model" name="Mi Modelo" parent="base.menu_custom" action="action_my_model"/>
+</odoo>
